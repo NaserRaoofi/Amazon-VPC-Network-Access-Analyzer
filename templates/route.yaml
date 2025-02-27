@@ -1,0 +1,154 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Route Table Stack - Creates private and public route tables for each VPC and associates them with subnets"
+
+Parameters:
+  VPC1Id:
+    Type: String
+    Description: "VPC1 ID from VPCStack"
+
+  VPC2Id:
+    Type: String
+    Description: "VPC2 ID from VPCStack"
+
+  VPC3Id:
+    Type: String
+    Description: "VPC3 ID from VPCStack"
+
+  VPC2InternetGatewayId:
+    Type: String
+    Description: "VPC2 Internet Gateway ID"
+
+  VPC3InternetGatewayId:
+    Type: String
+    Description: "VPC3 Internet Gateway ID"
+
+  VPC2NatGatewayId:
+    Type: String
+    Description: "VPC2 NAT Gateway ID"
+
+  VPC1PrivateSubnetId:
+    Type: String
+    Description: "Private Subnet ID for VPC1"
+
+  VPC2PrivateSubnetId:
+    Type: String
+    Description: "Private Subnet ID for VPC2"
+
+  VPC2PublicSubnetId:
+    Type: String
+    Description: "Public Subnet ID for VPC2"
+
+  VPC3PublicSubnetId:
+    Type: String
+    Description: "Public Subnet ID for VPC3"
+
+Resources:
+  # ✅ VPC1 - Private Route Table
+  VPC1PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC1Id
+      Tags:
+        - Key: Name
+          Value: "vpc1-PRIVATE-RouteTable"
+
+  # ✅ VPC2 - Private Route Table
+  VPC2PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC2Id
+      Tags:
+        - Key: Name
+          Value: "vpc2-PRIVATE-RouteTable"
+
+  # ✅ VPC2 - Public Route Table
+  VPC2PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC2Id
+      Tags:
+        - Key: Name
+          Value: "vpc2-PUBLIC-RouteTable"
+
+  # ✅ VPC3 - Public Route Table
+  VPC3PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC3Id
+      Tags:
+        - Key: Name
+          Value: "vpc3-PUBLIC-RouteTable"
+
+  # ✅ **Public Route for VPC2 (0.0.0.0/0 to IGW)**
+  VPC2PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref VPC2PublicRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref VPC2InternetGatewayId
+
+  # ✅ **Public Route for VPC3 (0.0.0.0/0 to IGW)**
+  VPC3PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref VPC3PublicRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref VPC3InternetGatewayId
+
+  # ✅ **Private Route for VPC2 (0.0.0.0/0 to NAT Gateway)**
+  VPC2PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref VPC2PrivateRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      NatGatewayId: !Ref VPC2NatGatewayId
+
+  # ✅ **Subnet Route Table Associations**
+  VPC1PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VPC1PrivateSubnetId
+      RouteTableId: !Ref VPC1PrivateRouteTable
+
+  VPC2PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VPC2PrivateSubnetId
+      RouteTableId: !Ref VPC2PrivateRouteTable
+
+  VPC2PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VPC2PublicSubnetId
+      RouteTableId: !Ref VPC2PublicRouteTable
+
+  VPC3PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VPC3PublicSubnetId
+      RouteTableId: !Ref VPC3PublicRouteTable
+
+Outputs:
+  VPC1PrivateRouteTableId:
+    Description: "VPC1 Private Route Table ID"
+    Value: !Ref VPC1PrivateRouteTable
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC1PrivateRouteTableId"
+
+  VPC2PrivateRouteTableId:
+    Description: "VPC2 Private Route Table ID"
+    Value: !Ref VPC2PrivateRouteTable
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2PrivateRouteTableId"
+
+  VPC2PublicRouteTableId:
+    Description: "VPC2 Public Route Table ID"
+    Value: !Ref VPC2PublicRouteTable
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2PublicRouteTableId"
+
+  VPC3PublicRouteTableId:
+    Description: "VPC3 Public Route Table ID"
+    Value: !Ref VPC3PublicRouteTable
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC3PublicRouteTableId"

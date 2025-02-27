@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Dedicated VPC Stack for the Project"
+
+Parameters:
+  S3BucketName:
+    Type: String
+    Description: "S3 Bucket Name passed from S3Stack"
+
+Resources:
+  # ✅ Create VPC1
+  VPC1:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: "VPC1"
+        - Key: S3Bucket
+          Value: !Ref S3BucketName
+
+  # ✅ Create VPC2
+  VPC2:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.2.0/24
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: "VPC2"
+        - Key: S3Bucket
+          Value: !Ref S3BucketName
+
+  # ✅ Create VPC3
+  VPC3:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.3.0/24
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: "VPC3"
+        - Key: S3Bucket
+          Value: !Ref S3BucketName
+
+  # ✅ Create Internet Gateway for VPC2
+  VPC2InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "VPC2-Internet-Gateway"
+
+  # ✅ Attach IGW to VPC2
+  AttachVPC2InternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC2
+      InternetGatewayId: !Ref VPC2InternetGateway
+
+  # ✅ Create Internet Gateway for VPC3
+  VPC3InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "VPC3-Internet-Gateway"
+
+  # ✅ Attach IGW to VPC3
+  AttachVPC3InternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC3
+      InternetGatewayId: !Ref VPC3InternetGateway
+
+Outputs:
+  VPC1Id:
+    Description: "VPC1 ID"
+    Value: !Ref VPC1
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC1Id"
+
+  VPC2Id:
+    Description: "VPC2 ID"
+    Value: !Ref VPC2
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2Id"
+
+  VPC3Id:
+    Description: "VPC3 ID"
+    Value: !Ref VPC3
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC3Id"
+
+  # ✅ Output Internet Gateway IDs
+  VPC2InternetGatewayId:
+    Description: "VPC2 Internet Gateway ID"
+    Value: !Ref VPC2InternetGateway
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2InternetGatewayId"
+
+  VPC3InternetGatewayId:
+    Description: "VPC3 Internet Gateway ID"
+    Value: !Ref VPC3InternetGateway
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC3InternetGatewayId"

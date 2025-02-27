@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Dedicated S3 Stack for the Project"
+
+Resources:
+  S3Bucket1:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "project-bucket-${AWS::AccountId}-${AWS::Region}"
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerPreferred
+
+Outputs:
+  S3Bucket1Name:
+    Description: "S3 Bucket 1 Name"
+    Value: !Ref S3Bucket1
+    Export:
+      Name: !Sub "${AWS::StackName}-S3Bucket1Name"  # ✅ Ensure this is exported globally
