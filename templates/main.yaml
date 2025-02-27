@@ -1,0 +1,99 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Main Stack - Deploys S3 Stack, VPC Stack, and Subnet Stack"
+
+Resources:
+  # ✅ S3 Stack
+  S3Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://s3.eu-west-2.amazonaws.com/sirwan-lab-v1/s3.yaml"
+
+  # ✅ VPC Stack - Depends on S3Stack
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: S3Stack
+    Properties:
+      TemplateURL: "https://s3.eu-west-2.amazonaws.com/sirwan-lab-v1/vpc.yaml"
+      Parameters: 
+        S3BucketName: !GetAtt S3Stack.Outputs.S3Bucket1Name
+
+  # ✅ Subnet Stack - Depends on VPCStack
+  SubnetStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: VPCStack
+    Properties:
+      TemplateURL: "https://s3.eu-west-2.amazonaws.com/sirwan-lab-v1/subnet.yaml"
+      Parameters:
+        VPC1Id: !GetAtt VPCStack.Outputs.VPC1Id
+        VPC2Id: !GetAtt VPCStack.Outputs.VPC2Id
+        VPC3Id: !GetAtt VPCStack.Outputs.VPC3Id
+
+Outputs:
+  S3Bucket1:
+    Description: "S3 Bucket 1 Name"
+    Value: !GetAtt S3Stack.Outputs.S3Bucket1Name
+    Export:
+      Name: !Sub "${AWS::StackName}-S3Bucket1"
+
+  VPC1Id:
+    Description: "VPC1 ID"
+    Value: !GetAtt VPCStack.Outputs.VPC1Id
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC1Id"
+
+  VPC2Id:
+    Description: "VPC2 ID"
+    Value: !GetAtt VPCStack.Outputs.VPC2Id
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2Id"
+
+  VPC3Id:
+    Description: "VPC3 ID"
+    Value: !GetAtt VPCStack.Outputs.VPC3Id
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC3Id"
+
+  # ✅ Internet Gateway Outputs (For RouteStack)
+  VPC2InternetGatewayId:
+    Description: "VPC2 Internet Gateway ID"
+    Value: !GetAtt VPCStack.Outputs.VPC2InternetGatewayId
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2InternetGatewayId"
+
+  VPC3InternetGatewayId:
+    Description: "VPC3 Internet Gateway ID"
+    Value: !GetAtt VPCStack.Outputs.VPC3InternetGatewayId
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC3InternetGatewayId"
+
+  # ✅ Subnet Outputs (For RouteStack)
+  VPC1PrivateSubnetId:
+    Description: "VPC1 Private Subnet ID"
+    Value: !GetAtt SubnetStack.Outputs.VPC1PrivateSubnetId
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC1PrivateSubnetId"
+
+  VPC2PrivateSubnetId:
+    Description: "VPC2 Private Subnet ID"
+    Value: !GetAtt SubnetStack.Outputs.VPC2PrivateSubnetId
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2PrivateSubnetId"
+
+  VPC2PublicSubnetId:
+    Description: "VPC2 Public Subnet ID"
+    Value: !GetAtt SubnetStack.Outputs.VPC2PublicSubnetId
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2PublicSubnetId"
+
+  VPC3PublicSubnetId:
+    Description: "VPC3 Public Subnet ID"
+    Value: !GetAtt SubnetStack.Outputs.VPC3PublicSubnetId
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC3PublicSubnetId"
+      
+ # ✅ NAT Gateway Output (Expose to RouteStack)
+  VPC2NatGatewayId:
+    Description: "VPC2 NAT Gateway ID"
+    Value: !GetAtt SubnetStack.Outputs.VPC2NatGatewayId
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2NatGatewayId"

@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Subnet Stack - Creates private and public subnets for each VPC and sets up a NAT Gateway for VPC2"
+
+Parameters:
+  VPC1Id:
+    Type: String
+    Description: "VPC1 ID from VPCStack"
+
+  VPC2Id:
+    Type: String
+    Description: "VPC2 ID from VPCStack"
+
+  VPC3Id:
+    Type: String
+    Description: "VPC3 ID from VPCStack"
+
+Resources:
+  # VPC1 - Private Subnet
+  VPC1PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1Id
+      CidrBlock: "10.0.1.0/28"
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: "vpc1-PRIVATE-subnet"
+
+  # VPC2 - Private Subnet
+  VPC2PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC2Id
+      CidrBlock: "10.0.2.0/28"
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: "vpc2-PRIVATE-subnet"
+
+  # VPC2 - Public Subnet
+  VPC2PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC2Id
+      CidrBlock: "10.0.2.16/28"
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: "vpc2-PUBLIC-subnet"
+
+  # VPC3 - Public Subnet
+  VPC3PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC3Id
+      CidrBlock: "10.0.3.0/28"
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: "vpc3-PUBLIC-subnet"
+
+  # ✅ Elastic IP for NAT Gateway
+  VPC2NatGatewayEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  # ✅ NAT Gateway in Public Subnet of VPC2
+  VPC2NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt VPC2NatGatewayEIP.AllocationId
+      SubnetId: !Ref VPC2PublicSubnet
+      Tags:
+        - Key: Name
+          Value: "vpc2-NAT-Gateway"
+
+Outputs:
+  VPC1PrivateSubnetId:
+    Description: "VPC1 Private Subnet ID"
+    Value: !Ref VPC1PrivateSubnet
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC1PrivateSubnetId"
+
+  VPC2PrivateSubnetId:
+    Description: "VPC2 Private Subnet ID"
+    Value: !Ref VPC2PrivateSubnet
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2PrivateSubnetId"
+
+  VPC2PublicSubnetId:
+    Description: "VPC2 Public Subnet ID"
+    Value: !Ref VPC2PublicSubnet
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2PublicSubnetId"
+
+  VPC3PublicSubnetId:
+    Description: "VPC3 Public Subnet ID"
+    Value: !Ref VPC3PublicSubnet
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC3PublicSubnetId"
+
+  # ✅ Output NAT Gateway ID for Reference in Route Tables
+  VPC2NatGatewayId:
+    Description: "VPC2 NAT Gateway ID"
+    Value: !Ref VPC2NatGateway
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC2NatGatewayId"
