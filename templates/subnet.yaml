@@ -106,3 +106,4 @@ Outputs:
     Value: !Ref VPC2NatGateway
     Export:
       Name: !Sub "${AWS::StackName}-VPC2NatGatewayId"
+#V2

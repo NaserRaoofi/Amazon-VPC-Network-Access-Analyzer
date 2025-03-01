@@ -16,3 +16,4 @@ Outputs:
     Value: !Ref S3Bucket1
     Export:
       Name: !Sub "${AWS::StackName}-S3Bucket1Name"  # ✅ Ensure this is exported globally
+#V2

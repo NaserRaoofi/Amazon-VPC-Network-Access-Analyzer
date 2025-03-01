@@ -128,6 +128,22 @@ Resources:
       SubnetId: !Ref VPC3PublicSubnetId
       RouteTableId: !Ref VPC3PublicRouteTable
 
+  # ✅ Route for VPC1 to VPC3 through Peering Connection
+  VPC1ToVPC3Route:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref VPC1PrivateRouteTable
+      DestinationCidrBlock: !GetAtt VPC3.CidrBlock
+      VpcPeeringConnectionId: !ImportValue "VPCStack-VPC1ToVPC3PeeringConnectionId"
+
+  # ✅ Route for VPC3 to VPC1 through Peering Connection
+  VPC3ToVPC1Route:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref VPC3PublicRouteTable
+      DestinationCidrBlock: !GetAtt VPC1.CidrBlock
+      VpcPeeringConnectionId: !ImportValue "VPCStack-VPC1ToVPC3PeeringConnectionId"
+
 Outputs:
   VPC1PrivateRouteTableId:
     Description: "VPC1 Private Route Table ID"
@@ -152,3 +168,4 @@ Outputs:
     Value: !Ref VPC3PublicRouteTable
     Export:
       Name: !Sub "${AWS::StackName}-VPC3PublicRouteTableId"
+#V2

@@ -711,3 +711,119 @@ Fetching RouteStack outputs...
 |  VPC2 Private Route Table ID |  RouteStack-VPC2PrivateRouteTableId  |  VPC2PrivateRouteTableId |  rtb-08a2be5d51bd05378 |
 |  VPC3 Public Route Table ID  |  RouteStack-VPC3PublicRouteTableId   |  VPC3PublicRouteTableId  |  rtb-0e5df42557e98765a |
 +------------------------------+--------------------------------------+--------------------------+------------------------+
+S3 bucket sirwan-lab-v1 exists.
+Uploading CloudFormation templates from /e/pro-v/Amazon-VPC-Network-Access-Analyzer/scripts/../templates to S3...
+Completed 3.0 KiB/3.0 KiB (3.0 KiB/s) with 1 file(s) remainingupload: ..\templates\main.yaml to s3://sirwan-lab-v1/main.yaml
+Uploaded main.yaml to s3://sirwan-lab-v1/
+Completed 529 Bytes/529 Bytes (576 Bytes/s) with 1 file(s) remainingupload: ..\templates\s3.yaml to s3://sirwan-lab-v1/s3.yaml          
+Uploaded s3.yaml to s3://sirwan-lab-v1/
+Completed 2.6 KiB/2.6 KiB (2.8 KiB/s) with 1 file(s) remainingupload: ..\templates\vpc.yaml to s3://sirwan-lab-v1/vpc.yaml  
+Uploaded vpc.yaml to s3://sirwan-lab-v1/
+Completed 2.7 KiB/2.7 KiB (2.5 KiB/s) with 1 file(s) remainingupload: ..\templates\subnet.yaml to s3://sirwan-lab-v1/subnet.yaml
+Uploaded subnet.yaml to s3://sirwan-lab-v1/
+Completed 4.2 KiB/4.2 KiB (4.3 KiB/s) with 1 file(s) remainingupload: ..\templates\route.yaml to s3://sirwan-lab-v1/route.yaml
+Uploaded route.yaml to s3://sirwan-lab-v1/
+Starting deployment of stack: MainStack
+Stack does not exist. Creating...
+{
+    "StackId": "arn:aws:cloudformation:eu-west-2:235494806851:stack/MainStack/03789860-f67b-11ef-b687-02db4c6db733"
+}
+Waiting for stack creation to complete...
+Waiting for SubnetStack creation to complete...
+Checking if RouteStack exists...
+RouteStack does not exist. Creating...
+{
+    "StackId": "arn:aws:cloudformation:eu-west-2:235494806851:stack/RouteStack/bf1e2d00-f5e0-11ef-b63d-02fde1d8d9e7"
+}
+Waiting for RouteStack creation to complete...
+Fetching stack outputs...
+-----------------------------------------------------------------------------------------------------------------------------------
+|                                                         DescribeStacks                                                          |
++--------------------------+-----------------------------------+------------------------+-----------------------------------------+
+|        Description       |            ExportName             |       OutputKey        |               OutputValue               |
++--------------------------+-----------------------------------+------------------------+-----------------------------------------+
+|  VPC3 ID                 |  MainStack-VPC3Id                 |  VPC3Id                |  vpc-0866807fb169e9e9f                  |
+|  VPC2 ID                 |  MainStack-VPC2Id                 |  VPC2Id                |  vpc-052d1d7a7a73b76e7                  |
+|  S3 Bucket 1 Name        |  MainStack-S3Bucket1              |  S3Bucket1             |  project-bucket-235494806851-eu-west-2  |
+|  VPC1 ID                 |  MainStack-VPC1Id                 |  VPC1Id                |  vpc-06f7f5bd288d7e6d3                  |
+|  VPC1 Private Subnet ID  |  MainStack-VPC1PrivateSubnetId    |  VPC1PrivateSubnetId   |  subnet-06586f43d46ad2d16               |
+|  VPC3 Public Subnet ID   |  MainStack-VPC3PublicSubnetId     |  VPC3PublicSubnetId    |  subnet-0b2036d3a61279765               |
+|  VPC2 Internet Gateway ID|  MainStack-VPC2InternetGatewayId  |  VPC2InternetGatewayId |  igw-051330f22d0e678b5                  |
+|  VPC2 Public Subnet ID   |  MainStack-VPC2PublicSubnetId     |  VPC2PublicSubnetId    |  subnet-03745e2b06c094b97               |
+|  VPC2 Private Subnet ID  |  MainStack-VPC2PrivateSubnetId    |  VPC2PrivateSubnetId   |  subnet-06251e279671f2ab4               |
+|  VPC3 Internet Gateway ID|  MainStack-VPC3InternetGatewayId  |  VPC3InternetGatewayId |  igw-068502a9019e20c36                  |
+|  VPC2 NAT Gateway ID     |  MainStack-VPC2NatGatewayId       |  VPC2NatGatewayId      |  nat-01f46c47ae5a5c799                  |
++--------------------------+-----------------------------------+------------------------+-----------------------------------------+
+Fetching RouteStack outputs...
+---------------------------------------------------------------------------------------------------------------------------
+|                                                     DescribeStacks                                                      |
++------------------------------+--------------------------------------+--------------------------+------------------------+
+|          Description         |             ExportName               |        OutputKey         |      OutputValue       |
++------------------------------+--------------------------------------+--------------------------+------------------------+
+|  VPC1 Private Route Table ID |  RouteStack-VPC1PrivateRouteTableId  |  VPC1PrivateRouteTableId |  rtb-02a815181031d0ced |
+|  VPC2 Public Route Table ID  |  RouteStack-VPC2PublicRouteTableId   |  VPC2PublicRouteTableId  |  rtb-079abdb2e2f3c8f91 |
+|  VPC2 Private Route Table ID |  RouteStack-VPC2PrivateRouteTableId  |  VPC2PrivateRouteTableId |  rtb-028546e01600a4c2d |
+|  VPC3 Public Route Table ID  |  RouteStack-VPC3PublicRouteTableId   |  VPC3PublicRouteTableId  |  rtb-0c4bfa3c0ce71d665 |
++------------------------------+--------------------------------------+--------------------------+------------------------+
+S3 bucket sirwan-lab-v1 exists.
+Uploading CloudFormation templates from /e/pro-v/Amazon-VPC-Network-Access-Analyzer/scripts/../templates to S3...
+Completed 3.1 KiB/3.1 KiB (2.9 KiB/s) with 1 file(s) remainingupload: ..\templates\main.yaml to s3://sirwan-lab-v1/main.yaml
+Uploaded main.yaml to s3://sirwan-lab-v1/
+Completed 532 Bytes/532 Bytes (583 Bytes/s) with 1 file(s) remainingupload: ..\templates\s3.yaml to s3://sirwan-lab-v1/s3.yaml          
+Uploaded s3.yaml to s3://sirwan-lab-v1/
+Completed 3.5 KiB/3.5 KiB (4.2 KiB/s) with 1 file(s) remainingupload: ..\templates\vpc.yaml to s3://sirwan-lab-v1/vpc.yaml  
+Uploaded vpc.yaml to s3://sirwan-lab-v1/
+Completed 2.7 KiB/2.7 KiB (3.3 KiB/s) with 1 file(s) remainingupload: ..\templates\subnet.yaml to s3://sirwan-lab-v1/subnet.yaml
+Uploaded subnet.yaml to s3://sirwan-lab-v1/
+Completed 4.2 KiB/4.2 KiB (4.7 KiB/s) with 1 file(s) remainingupload: ..\templates\route.yaml to s3://sirwan-lab-v1/route.yaml
+Uploaded route.yaml to s3://sirwan-lab-v1/
+Starting deployment of stack: MainStack
+Stack already exists. Updating...
+{
+    "StackId": "arn:aws:cloudformation:eu-west-2:235494806851:stack/MainStack/03789860-f67b-11ef-b687-02db4c6db733"
+}
+Waiting for stack update to complete...
+Waiting for SubnetStack creation to complete...
+Checking if RouteStack exists...
+RouteStack exists. Updating...
+
+An error occurred (ValidationError) when calling the UpdateStack operation: No updates are to be performed.
+Waiting for RouteStack update to complete...
+S3 bucket sirwan-lab-v1 exists.
+Uploading CloudFormation templates from /e/pro-v/Amazon-VPC-Network-Access-Analyzer/scripts/../templates to S3...
+Completed 3.1 KiB/3.1 KiB (3.1 KiB/s) with 1 file(s) remainingupload: ..\templates\main.yaml to s3://sirwan-lab-v1/main.yaml
+Uploaded main.yaml to s3://sirwan-lab-v1/
+Completed 532 Bytes/532 Bytes (369 Bytes/s) with 1 file(s) remainingupload: ..\templates\s3.yaml to s3://sirwan-lab-v1/s3.yaml          
+Uploaded s3.yaml to s3://sirwan-lab-v1/
+Completed 4.0 KiB/4.0 KiB (3.6 KiB/s) with 1 file(s) remainingupload: ..\templates\vpc.yaml to s3://sirwan-lab-v1/vpc.yaml  
+Uploaded vpc.yaml to s3://sirwan-lab-v1/
+Completed 2.7 KiB/2.7 KiB (2.2 KiB/s) with 1 file(s) remainingupload: ..\templates\subnet.yaml to s3://sirwan-lab-v1/subnet.yaml
+Uploaded subnet.yaml to s3://sirwan-lab-v1/
+Completed 4.8 KiB/4.8 KiB (5.4 KiB/s) with 1 file(s) remainingupload: ..\templates\route.yaml to s3://sirwan-lab-v1/route.yaml
+Uploaded route.yaml to s3://sirwan-lab-v1/
+Starting deployment of stack: MainStack
+Stack already exists. Updating...
+{
+    "StackId": "arn:aws:cloudformation:eu-west-2:235494806851:stack/MainStack/03789860-f67b-11ef-b687-02db4c6db733"
+}
+Waiting for stack update to complete...
+Waiting for SubnetStack creation to complete...
+Checking if RouteStack exists...
+RouteStack exists. Updating...
+
+An error occurred (ValidationError) when calling the UpdateStack operation: Template error: instance of Fn::GetAtt references undefined resource VPC3
+Waiting for RouteStack update to complete...
+S3 bucket sirwan-lab-v1 exists.
+Uploading CloudFormation templates from /e/pro-v/Amazon-VPC-Network-Access-Analyzer/scripts/../templates to S3...
+Completed 3.1 KiB/3.1 KiB (3.2 KiB/s) with 1 file(s) remainingupload: ..\templates\main.yaml to s3://sirwan-lab-v1/main.yaml
+Uploaded main.yaml to s3://sirwan-lab-v1/
+Completed 532 Bytes/532 Bytes (505 Bytes/s) with 1 file(s) remainingupload: ..\templates\s3.yaml to s3://sirwan-lab-v1/s3.yaml          
+Uploaded s3.yaml to s3://sirwan-lab-v1/
+Completed 4.0 KiB/4.0 KiB (4.1 KiB/s) with 1 file(s) remainingupload: ..\templates\vpc.yaml to s3://sirwan-lab-v1/vpc.yaml  
+Uploaded vpc.yaml to s3://sirwan-lab-v1/
+Completed 2.7 KiB/2.7 KiB (3.1 KiB/s) with 1 file(s) remainingupload: ..\templates\subnet.yaml to s3://sirwan-lab-v1/subnet.yaml
+Uploaded subnet.yaml to s3://sirwan-lab-v1/
+Completed 4.8 KiB/4.8 KiB (5.4 KiB/s) with 1 file(s) remainingupload: ..\templates\route.yaml to s3://sirwan-lab-v1/route.yaml
+Uploaded route.yaml to s3://sirwan-lab-v1/
+Starting deployment of stack: MainStack
+Stack already exists. Updating...
