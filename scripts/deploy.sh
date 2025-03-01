@@ -46,7 +46,7 @@ upload_templates() {
 
 # Function to check if a stack exists
 stack_exists() {
-    aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" > /dev/null 2>&1
+    aws cloudformation describe-stacks --stack-name "$1" --region "$REGION" > /dev/null 2>&1
     return $?
 }
 
@@ -56,7 +56,7 @@ deploy_stack() {
 
     echo "Starting deployment of stack: $STACK_NAME" | tee -a $LOG_FILE
 
-    if stack_exists; then
+    if stack_exists "$STACK_NAME"; then
         echo "Stack already exists. Updating..." | tee -a $LOG_FILE
         aws cloudformation update-stack \
             --stack-name "$STACK_NAME" \
@@ -81,73 +81,71 @@ deploy_stack() {
     echo "Waiting for SubnetStack creation to complete..." | tee -a $LOG_FILE
     aws cloudformation wait stack-create-complete --stack-name "$STACK_NAME" --region "$REGION"
 
- echo "Checking if RouteStack exists..." | tee -a $LOG_FILE
-if aws cloudformation describe-stacks --stack-name "$ROUTE_STACK_NAME" --region "$REGION" > /dev/null 2>&1; then
-    echo "RouteStack exists. Updating..." | tee -a $LOG_FILE
-    aws cloudformation update-stack \
-        --stack-name "$ROUTE_STACK_NAME" \
-        --template-url "https://s3.$REGION.amazonaws.com/$S3_BUCKET/route.yaml" \
-        --parameters \
-            ParameterKey=VPC1Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC1Id'].OutputValue" --output text) \
-            ParameterKey=VPC2Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC2Id'].OutputValue" --output text) \
-            ParameterKey=VPC3Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC3Id'].OutputValue" --output text) \
-            ParameterKey=VPC1PrivateSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC1PrivateSubnetId'].OutputValue" --output text) \
-            ParameterKey=VPC2PrivateSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC2PrivateSubnetId'].OutputValue" --output text) \
-            ParameterKey=VPC2PublicSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC2PublicSubnetId'].OutputValue" --output text) \
-            ParameterKey=VPC3PublicSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC3PublicSubnetId'].OutputValue" --output text) \
-            ParameterKey=VPC2InternetGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC2InternetGatewayId'].OutputValue" --output text) \
-            ParameterKey=VPC3InternetGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC3InternetGatewayId'].OutputValue" --output text) \
-            ParameterKey=VPC2NatGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC2NatGatewayId'].OutputValue" --output text) \
-        --capabilities CAPABILITY_NAMED_IAM \
-        --region "$REGION" 2>&1 | tee -a $LOG_FILE
+    echo "Checking if RouteStack exists..." | tee -a $LOG_FILE
+    if stack_exists "$ROUTE_STACK_NAME"; then
+        echo "RouteStack exists. Updating..." | tee -a $LOG_FILE
+        aws cloudformation update-stack \
+            --stack-name "$ROUTE_STACK_NAME" \
+            --template-url "https://s3.$REGION.amazonaws.com/$S3_BUCKET/route.yaml" \
+            --parameters \
+                ParameterKey=VPC1Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC1Id'].OutputValue" --output text) \
+                ParameterKey=VPC2Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC2Id'].OutputValue" --output text) \
+                ParameterKey=VPC3Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC3Id'].OutputValue" --output text) \
+                ParameterKey=VPC1PrivateSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC1PrivateSubnetId'].OutputValue" --output text) \
+                ParameterKey=VPC2PrivateSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC2PrivateSubnetId'].OutputValue" --output text) \
+                ParameterKey=VPC2PublicSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC2PublicSubnetId'].OutputValue" --output text) \
+                ParameterKey=VPC3PublicSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC3PublicSubnetId'].OutputValue" --output text) \
+                ParameterKey=VPC2InternetGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC2InternetGatewayId'].OutputValue" --output text) \
+                ParameterKey=VPC3InternetGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC3InternetGatewayId'].OutputValue" --output text) \
+                ParameterKey=VPC2NatGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC2NatGatewayId'].OutputValue" --output text) \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --region "$REGION" 2>&1 | tee -a $LOG_FILE
 
-    echo "Waiting for RouteStack update to complete..." | tee -a $LOG_FILE
-    aws cloudformation wait stack-update-complete --stack-name "$ROUTE_STACK_NAME" --region "$REGION"
+        echo "Waiting for RouteStack update to complete..." | tee -a $LOG_FILE
+        aws cloudformation wait stack-update-complete --stack-name "$ROUTE_STACK_NAME" --region "$REGION"
 
-else
-    echo "RouteStack does not exist. Creating..." | tee -a $LOG_FILE
-    aws cloudformation create-stack \
-        --stack-name "$ROUTE_STACK_NAME" \
-        --template-url "https://s3.$REGION.amazonaws.com/$S3_BUCKET/route.yaml" \
-        --parameters \
-            ParameterKey=VPC1Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC1Id'].OutputValue" --output text) \
-            ParameterKey=VPC2Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC2Id'].OutputValue" --output text) \
-            ParameterKey=VPC3Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC3Id'].OutputValue" --output text) \
-            ParameterKey=VPC1PrivateSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC1PrivateSubnetId'].OutputValue" --output text) \
-            ParameterKey=VPC2PrivateSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC2PrivateSubnetId'].OutputValue" --output text) \
-            ParameterKey=VPC2PublicSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC2PublicSubnetId'].OutputValue" --output text) \
-            ParameterKey=VPC3PublicSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC3PublicSubnetId'].OutputValue" --output text) \
-            ParameterKey=VPC2InternetGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC2InternetGatewayId'].OutputValue" --output text) \
-            ParameterKey=VPC3InternetGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC3InternetGatewayId'].OutputValue" --output text) \
-            ParameterKey=VPC2NatGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
-                --query "Stacks[0].Outputs[?OutputKey=='VPC2NatGatewayId'].OutputValue" --output text) \
-        --capabilities CAPABILITY_NAMED_IAM \
-        --region "$REGION" 2>&1 | tee -a $LOG_FILE
+    else
+        echo "RouteStack does not exist. Creating..." | tee -a $LOG_FILE
+        aws cloudformation create-stack \
+            --stack-name "$ROUTE_STACK_NAME" \
+            --template-url "https://s3.$REGION.amazonaws.com/$S3_BUCKET/route.yaml" \
+            --parameters \
+                ParameterKey=VPC1Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC1Id'].OutputValue" --output text) \
+                ParameterKey=VPC2Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC2Id'].OutputValue" --output text) \
+                ParameterKey=VPC3Id,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC3Id'].OutputValue" --output text) \
+                ParameterKey=VPC1PrivateSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC1PrivateSubnetId'].OutputValue" --output text) \
+                ParameterKey=VPC2PrivateSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC2PrivateSubnetId'].OutputValue" --output text) \
+                ParameterKey=VPC2PublicSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC2PublicSubnetId'].OutputValue" --output text) \
+                ParameterKey=VPC3PublicSubnetId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC3PublicSubnetId'].OutputValue" --output text) \
+                ParameterKey=VPC2InternetGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC2InternetGatewayId'].OutputValue" --output text) \
+                ParameterKey=VPC3InternetGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC3InternetGatewayId'].OutputValue" --output text) \
+                ParameterKey=VPC2NatGatewayId,ParameterValue=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" \
+                    --query "Stacks[0].Outputs[?OutputKey=='VPC2NatGatewayId'].OutputValue" --output text) \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --region "$REGION" 2>&1 | tee -a $LOG_FILE
 
-    echo "Waiting for RouteStack creation to complete..." | tee -a $LOG_FILE
-    aws cloudformation wait stack-create-complete --stack-name "$ROUTE_STACK_NAME" --region "$REGION"
-fi
-
-
+        echo "Waiting for RouteStack creation to complete..." | tee -a $LOG_FILE
+        aws cloudformation wait stack-create-complete --stack-name "$ROUTE_STACK_NAME" --region "$REGION"
+    fi
 }
 
 # Function to retrieve stack outputs

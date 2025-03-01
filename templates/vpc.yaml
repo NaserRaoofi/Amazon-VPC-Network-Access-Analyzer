@@ -76,6 +76,38 @@ Resources:
       VpcId: !Ref VPC3
       InternetGatewayId: !Ref VPC3InternetGateway
 
+  # ✅ Create S3 Gateway Endpoint for VPC1
+  VPC1S3Endpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action:
+              - 's3:GetObject'
+              - 's3:ListBucket'
+              - 's3:PutObject'
+            Resource:
+              - !Sub 'arn:aws:s3:::${S3BucketName}'
+              - !Sub 'arn:aws:s3:::${S3BucketName}/*'
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      VpcId: !Ref VPC1
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - Fn::ImportValue: !Sub "RouteStack-VPC1PrivateRouteTableId"
+
+  # ✅ VPC Peering Connection between VPC1 and VPC3
+  VPC1ToVPC3PeeringConnection:
+    Type: AWS::EC2::VPCPeeringConnection
+    Properties:
+      VpcId: !Ref VPC1
+      PeerVpcId: !Ref VPC3
+      Tags:
+        - Key: Name
+          Value: "VPC1-to-VPC3-Peering"
+
 Outputs:
   VPC1Id:
     Description: "VPC1 ID"
@@ -107,3 +139,19 @@ Outputs:
     Value: !Ref VPC3InternetGateway
     Export:
       Name: !Sub "${AWS::StackName}-VPC3InternetGatewayId"
+
+  # ✅ Add S3 Endpoint Output
+  VPC1S3EndpointId:
+    Description: "VPC1 S3 Gateway Endpoint ID"
+    Value: !Ref VPC1S3Endpoint
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC1S3EndpointId"
+
+  # ✅ Add VPC Peering Connection Output
+  VPC1ToVPC3PeeringConnectionId:
+    Description: "VPC1 to VPC3 Peering Connection ID"
+    Value: !Ref VPC1ToVPC3PeeringConnection
+    Export:
+      Name: !Sub "${AWS::StackName}-VPC1ToVPC3PeeringConnectionId"
+
+#V2

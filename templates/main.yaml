@@ -97,3 +97,5 @@ Outputs:
     Value: !GetAtt SubnetStack.Outputs.VPC2NatGatewayId
     Export:
       Name: !Sub "${AWS::StackName}-VPC2NatGatewayId"
+
+      #V2
